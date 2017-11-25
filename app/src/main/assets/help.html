@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>FakeLock | Help</title>
+    <meta name="viewport" content="initial-scale=1,width=device-width">
+    <link rel="author" href="https://github.com/varunon9"/>
+    <meta name="author" content="varunon9"/>
+    <style>
+            html, body {
+                height: 100%;
+            }
+            body {
+                width: 100%;
+                padding: 0px;
+                margin: 0px;
+                overflow-X: hidden;
+            }
+            .primary-color {
+                color: #3F51B5;
+            }
+            .accent-color {
+                color: #9C27B0;
+            }
+            .content {
+                width: 100%;
+                text-align: justify;
+                margin-bottom: 10px;
+            }
+            .content ul {
+                margin: 5px;
+            }
+            .heading {
+                font-weight: bold;
+            }
+            .rules p {
+                margin: 5px 0 5px 0;
+            }
+            .rules p::before {
+                content: "»";
+                color: #3F51B5;
+            }
+        </style>
+</head>
+<body>
+<div class="content accent-color">
+    Fitto (Fit-to) is a turn based Android game between user and computer on a grid board using Artificial Intelligence.
+</div>
+<div class="content">
+    <div class="primary-color heading">
+        How to Play:
+    </div>
+    <div class="accent-color rules">
+        <p>
+            You will have initially 8 stones to place on board (one in each turn).
+        </p>
+        <p>
+            Once you are out of stones in hand then you can move your placed stones to adjacent positions.
+        </p>
+        <p>
+            Your strategy should be to form triplet as well as block computer to do the same.
+        </p>
+        <p>
+            On forming a triplet, you will get chance to eat computer's stone but you can't eat a stone which is a part of triplet.
+        </p>
+        <p>
+            If you formed a triplet but all the stones of computer are locked i.e. part of some triplet then your health will increase.
+        </p>
+        <p>
+            Eating computer's stone will decrease its health and at the same time you get more opportunities to form triplet.
+        </p>
+        <p>
+            All the above rules equally applies to computer.
+        </p>
+        <p>
+            Player which make opponent player run out of stones win.
+        </p>
+    </div>
+</div>
+</body>
+</html>

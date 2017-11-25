@@ -23,7 +23,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:padding="@dimen/activity_horizontal_margin"
-            android:text="Hi Mr. Developer!!"
+            android:text="@string/heading"
             android:textSize="18sp" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:padding="@dimen/activity_horizontal_margin"
-            android:text="Today is the best day."
+            android:text="@string/subHeading"
             android:textStyle="bold" />
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_height="0dp"
             android:layout_weight="8"
             android:padding="@dimen/activity_horizontal_margin"
-            android:text="Arise, awake and do not stop until the goal is reached." />
+            android:text="@string/quote" />
 
     </LinearLayout>
 
@@ -50,6 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

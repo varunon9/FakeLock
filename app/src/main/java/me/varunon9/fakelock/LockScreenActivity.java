@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,8 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
     private TextView headingTextView;
     private TextView subHeadingTextView;
     private TextView quoteTextView;
+    private boolean isLockLinearLayoutVisible = false;
+    private LinearLayout lockLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,8 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
 
         vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
 
+        lockLinearLayout = (LinearLayout) findViewById(R.id.lockLinearLayout);
+
         headingTextView = (TextView) findViewById(R.id.headingTextView);
         subHeadingTextView = (TextView) findViewById(R.id.subHeadingTextView);
         quoteTextView = (TextView) findViewById(R.id.quoteTextView);
@@ -73,7 +78,13 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
             private GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
-                    Toast.makeText(LockScreenActivity.this, "Double tap", Toast.LENGTH_SHORT).show();
+                    if (isLockLinearLayoutVisible) {
+                        lockLinearLayout.setVisibility(View.GONE);
+                    } else {
+                        lockLinearLayout.setVisibility(View.VISIBLE);
+                    }
+                    isLockLinearLayoutVisible = !isLockLinearLayoutVisible;
+                    playVibration(100);
                     return super.onDoubleTap(e);
                 }
             });
@@ -108,9 +119,14 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         return; //Do nothing!
     }
 
-    public void unlockScreen(View view) {
-        //Instead of using finish(), this totally destroys the process
-        android.os.Process.killProcess(android.os.Process.myPid());
+    private void unlockScreen() {
+        finish(); // closing activity
+
+        // going to home screen
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
     @Override
@@ -198,6 +214,8 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
 
             case R.id.buttonEnter: {
                 playVibration(200);
+                String password = inputPasswordEditText.getText().toString();
+                checkAndUnlockScreen(password);
                 break;
             }
 
@@ -219,5 +237,9 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         } catch(Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void checkAndUnlockScreen(String password) {
+        unlockScreen();
     }
 }

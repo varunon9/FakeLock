@@ -12,9 +12,8 @@ Custom Android LockScreen app to provide extra layer of privacy. It doesn't disa
 
 ### Screenshots:
 
-|  |  |
 | --- | --- |
-|![LockScreen](./screenshots/lockscreen.png) | |
+|![LockScreen with Hidden Password Input](./screenshots/lockscreen_no_password.png) |![LockScreen](./screenshots/lockscreen.png) |
 
 ### How to contribute?
 * Fork this repository.
