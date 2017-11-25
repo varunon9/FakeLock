@@ -1,164 +1,223 @@
 package me.varunon9.fakelock;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
+import android.os.Build;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
-public class LockScreenActivity extends AppCompatActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
+public class LockScreenActivity extends AppCompatActivity implements View.OnClickListener {
 
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
-    private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    private View mContentView;
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
-
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-    private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            mControlsView.setVisibility(View.VISIBLE);
-        }
-    };
-    private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
+    private EditText inputPasswordEditText;
+    private Vibrator vibrator;
+    private TextView headingTextView;
+    private TextView subHeadingTextView;
+    private TextView quoteTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_lockscreen);
+        //Set up our Lockscreen
+        makeFullScreen();
+        startService(new Intent(this,LockScreenService.class));
 
-        mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
+        setContentView(R.layout.activity_lock_screen);
 
+        Button button0 = (Button) findViewById(R.id.button0);
+        button0.setOnClickListener(this);
+        Button button1 = (Button) findViewById(R.id.button1);
+        button1.setOnClickListener(this);
+        Button button2 = (Button) findViewById(R.id.button2);
+        button2.setOnClickListener(this);
+        Button button3 = (Button) findViewById(R.id.button3);
+        button3.setOnClickListener(this);
+        Button button4 = (Button) findViewById(R.id.button4);
+        button4.setOnClickListener(this);
+        Button button5 = (Button) findViewById(R.id.button5);
+        button5.setOnClickListener(this);
+        Button button6 = (Button) findViewById(R.id.button6);
+        button6.setOnClickListener(this);
+        Button button7 = (Button) findViewById(R.id.button7);
+        button7.setOnClickListener(this);
+        Button button8 = (Button) findViewById(R.id.button8);
+        button8.setOnClickListener(this);
+        Button button9 = (Button) findViewById(R.id.button9);
+        button9.setOnClickListener(this);
 
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
+        ImageButton buttonEnter = (ImageButton) findViewById(R.id.buttonEnter);
+        buttonEnter.setOnClickListener(this);
+        ImageButton buttonBack = (ImageButton) findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(this);
+
+        inputPasswordEditText = (EditText) findViewById(R.id.inputPasswordEditText);
+
+        vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+
+        headingTextView = (TextView) findViewById(R.id.headingTextView);
+        subHeadingTextView = (TextView) findViewById(R.id.subHeadingTextView);
+        quoteTextView = (TextView) findViewById(R.id.quoteTextView);
+
+        quoteTextView.setOnTouchListener(new View.OnTouchListener() {
+
+            private GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    Toast.makeText(LockScreenActivity.this, "Double tap", Toast.LENGTH_SHORT).show();
+                    return super.onDoubleTap(e);
+                }
+            });
+
             @Override
-            public void onClick(View view) {
-                toggle();
+            public boolean onTouch(View v, MotionEvent event) {
+                gestureDetector.onTouchEvent(event);
+                return true;
             }
         });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
-    }
-
-    private void toggle() {
-        if (mVisible) {
-            hide();
-        } else {
-            show();
-        }
-    }
-
-    private void hide() {
-        // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mControlsView.setVisibility(View.GONE);
-        mVisible = false;
-
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
-    }
-
-    @SuppressLint("InlinedApi")
-    private void show() {
-        // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        mVisible = true;
-
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable);
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
     }
 
     /**
-     * Schedules a call to hide() in delay milliseconds, canceling any
-     * previously scheduled calls.
+     * A simple method that sets the screen to fullscreen.  It removes the Notifications bar,
+     *   the Actionbar and the virtual keys (if they are on the phone)
      */
-    private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    public void makeFullScreen() {
+        getSupportActionBar().hide();
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        if(Build.VERSION.SDK_INT < 19) { // View.SYSTEM_UI_FLAG_IMMERSIVE is only on API 19+
+            this.getWindow().getDecorView()
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        } else {
+            this.getWindow().getDecorView()
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        return; //Do nothing!
+    }
+
+    public void unlockScreen(View view) {
+        //Instead of using finish(), this totally destroys the process
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.button0: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "0";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button1: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "1";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button2: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "2";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button3: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "3";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button4: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "4";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button5: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "5";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button6: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "6";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button7: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "7";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button8: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "8";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.button9: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                password += "9";
+                inputPasswordEditText.setText(password);
+                break;
+            }
+
+            case R.id.buttonEnter: {
+                playVibration(200);
+                break;
+            }
+
+            case R.id.buttonBack: {
+                playVibration(50);
+                String password = inputPasswordEditText.getText().toString();
+                if (password.length() > 0) {
+                    password = password.substring(0, password.length() - 1);
+                    inputPasswordEditText.setText(password);
+                }
+                break;
+            }
+        }
+    }
+
+    private void playVibration(long duration) {
+        try {
+            vibrator.vibrate(duration);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }
