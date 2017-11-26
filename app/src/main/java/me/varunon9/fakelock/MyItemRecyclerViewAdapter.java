@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -75,11 +76,13 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             appPackageNameTextView = (TextView) view.findViewById(R.id.appPackageNameTextView);
             appIconImageView = (ImageView) view.findViewById(R.id.appIconImageView);
             hideAppToggleButton = (ToggleButton) view.findViewById(R.id.hideAppToggleButton);
-        }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + appNameTextView.getText() + "'";
+            hideAppToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    System.out.println(appPackageNameTextView.getText());
+                }
+            });
         }
     }
 }
