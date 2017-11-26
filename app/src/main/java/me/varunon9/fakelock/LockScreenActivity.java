@@ -119,8 +119,10 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         return; //Do nothing!
     }
 
-    private void unlockScreen() {
-        finish(); // closing activity
+    private void unlockScreen(boolean isPasswordRight) {
+        if (isPasswordRight) {
+            finish(); // closing activity
+        }
 
         // going to home screen
         Intent startMain = new Intent(Intent.ACTION_MAIN);
@@ -239,7 +241,13 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    /**
+     * If password is right-
+     * Unhide selected apps, finish LockScreen Activity and go to home screen
+     * else go to home screen
+     * @param password
+     */
     private void checkAndUnlockScreen(String password) {
-        unlockScreen();
+        unlockScreen(true);
     }
 }

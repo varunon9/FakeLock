@@ -1,29 +1,32 @@
 package me.varunon9.fakelock;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import me.varunon9.fakelock.MainFragment.OnListFragmentInteractionListener;
-import me.varunon9.fakelock.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
+
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<ApplicationInfo> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private PackageManager packageManager;
 
-    public MyItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyItemRecyclerViewAdapter(List<ApplicationInfo> items,
+                                     OnListFragmentInteractionListener listener,
+                                     PackageManager packageManager) {
         mValues = items;
         mListener = listener;
+        this.packageManager = packageManager;
     }
 
     @Override
@@ -36,8 +39,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.appPackageNameTextView.setText(mValues.get(position).packageName);
+        holder.appNameTextView.setText(mValues.get(position).loadLabel(packageManager));
+        holder.appIconImageView.setImageDrawable(mValues.get(position).loadIcon(packageManager));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,20 +62,24 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView appNameTextView;
+        public final TextView appPackageNameTextView;
+        public final ImageView appIconImageView;
+        public final ToggleButton hideAppToggleButton;
+        public ApplicationInfo mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            appNameTextView = (TextView) view.findViewById(R.id.appNameTextView);
+            appPackageNameTextView = (TextView) view.findViewById(R.id.appPackageNameTextView);
+            appIconImageView = (ImageView) view.findViewById(R.id.appIconImageView);
+            hideAppToggleButton = (ToggleButton) view.findViewById(R.id.hideAppToggleButton);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + appNameTextView.getText() + "'";
         }
     }
 }

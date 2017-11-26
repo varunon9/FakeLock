@@ -1,6 +1,8 @@
 package me.varunon9.fakelock;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,9 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import me.varunon9.fakelock.dummy.DummyContent;
-import me.varunon9.fakelock.dummy.DummyContent.DummyItem;
-
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,8 +23,10 @@ import java.util.List;
  */
 public class MainFragment extends Fragment {
 
-    // TODO: Customize parameters
     private int mColumnCount = 1;
+
+
+    private List<ApplicationInfo> installedAppsPackagesList;
 
     private OnListFragmentInteractionListener mListener;
 
@@ -55,7 +57,22 @@ public class MainFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            PackageManager packageManager = getActivity().getPackageManager();
+            installedAppsPackagesList =
+                    packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
+
+            List<ApplicationInfo> launcherAppsPackagesList = new ArrayList<>();
+
+            // filter non-launcher apps
+            for (int i = 0; i < installedAppsPackagesList.size(); i++) {
+                ApplicationInfo packageInfo = installedAppsPackagesList.get(i);
+                if (packageManager.getLaunchIntentForPackage(packageInfo.packageName) != null) {
+                   launcherAppsPackagesList.add(packageInfo);
+                }
+            }
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(launcherAppsPackagesList,
+                    mListener, packageManager));
         }
         return view;
     }
@@ -89,7 +106,7 @@ public class MainFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+
+        void onListFragmentInteraction(ApplicationInfo item);
     }
 }

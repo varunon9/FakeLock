@@ -1,5 +1,6 @@
 package me.varunon9.fakelock;
 
+import android.content.pm.ApplicationInfo;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import me.varunon9.fakelock.dummy.DummyContent;
 import me.varunon9.fakelock.help.HelpFragment;
 import me.varunon9.fakelock.settings.SettingsFragment;
 
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnLi
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(ApplicationInfo item) {
 
     }
 }

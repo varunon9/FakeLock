@@ -10,8 +10,10 @@ public class LockScreenReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        // If the screen was just turned on or it just booted up, start your Lock Activity
+        // If the screen was just turned off or it just booted up, start your Lock Activity
         if(action.equals(Intent.ACTION_SCREEN_OFF) || action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+
+            // todo hide selected apps
             Intent i = new Intent(context, LockScreenActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
