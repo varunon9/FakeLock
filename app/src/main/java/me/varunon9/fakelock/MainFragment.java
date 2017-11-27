@@ -72,7 +72,7 @@ public class MainFragment extends Fragment {
                 }
             }
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(launcherAppsPackagesList,
-                    mListener, packageManager));
+                    mListener, packageManager, getActivity()));
         }
         return view;
     }

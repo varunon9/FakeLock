@@ -1,7 +1,9 @@
 package me.varunon9.fakelock;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Map;
+
+import me.varunon9.fakelock.utility.HideAppsPreferenceUtility;
+
 public class LockScreenActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText inputPasswordEditText;
@@ -26,12 +32,14 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
     private TextView quoteTextView;
     private boolean isLockLinearLayoutVisible = false;
     private LinearLayout lockLinearLayout;
+    private Map<String, ?> hiddenAppsMap;
+    private PackageManager packageManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Set up our Lockscreen
+        // Set up our Lockscreen
         makeFullScreen();
         startService(new Intent(this,LockScreenService.class));
 
@@ -95,6 +103,20 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
                 return true;
             }
         });
+
+        packageManager = getPackageManager();
+
+        // hiding apps
+        hiddenAppsMap =
+                new HideAppsPreferenceUtility(getApplicationContext()).getAllHiddenAppsMap();
+        for (Map.Entry<String, ?> app : hiddenAppsMap.entrySet()) {
+            String packageName = app.getValue().toString();
+            System.out.println(packageName);
+            ComponentName componentName =
+                    new ComponentName(packageName, packageName + ".MainActivity.class");
+            packageManager.setComponentEnabledSetting(componentName,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        }
     }
 
     /**

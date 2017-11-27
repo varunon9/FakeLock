@@ -1,5 +1,6 @@
 package me.varunon9.fakelock;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import me.varunon9.fakelock.MainFragment.OnListFragmentInteractionListener;
+import me.varunon9.fakelock.utility.HideAppsPreferenceUtility;
 
 import java.util.List;
 
@@ -21,13 +23,17 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     private final List<ApplicationInfo> mValues;
     private final OnListFragmentInteractionListener mListener;
     private PackageManager packageManager;
+    private HideAppsPreferenceUtility hideAppsPreferenceUtility;
+    private Context context;
 
     public MyItemRecyclerViewAdapter(List<ApplicationInfo> items,
                                      OnListFragmentInteractionListener listener,
-                                     PackageManager packageManager) {
+                                     PackageManager packageManager, Context context) {
         mValues = items;
         mListener = listener;
         this.packageManager = packageManager;
+        this.context = context;
+        hideAppsPreferenceUtility = new HideAppsPreferenceUtility(context);
     }
 
     @Override
@@ -39,10 +45,12 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        String packageName = mValues.get(position).packageName;
         holder.mItem = mValues.get(position);
-        holder.appPackageNameTextView.setText(mValues.get(position).packageName);
+        holder.appPackageNameTextView.setText(packageName);
         holder.appNameTextView.setText(mValues.get(position).loadLabel(packageManager));
         holder.appIconImageView.setImageDrawable(mValues.get(position).loadIcon(packageManager));
+        holder.hideAppToggleButton.setChecked(hideAppsPreferenceUtility.isAppHidden(packageName));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +88,12 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             hideAppToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    System.out.println(appPackageNameTextView.getText());
+                    String packageName = appPackageNameTextView.getText().toString();
+                    if (isChecked) {
+                        hideAppsPreferenceUtility.addAppToHiddenAppsList(packageName);
+                    } else {
+                        hideAppsPreferenceUtility.removeAppToHiddenAppsList(packageName);
+                    }
                 }
             });
         }
