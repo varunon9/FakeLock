@@ -4,9 +4,9 @@ Custom Android LockScreen app to provide extra layer of privacy. It doesn't disa
 
 ### Features
 
-* It will hide selected apps and act as secondary LockScreen.
-* Apps will be visible only after entering correct password.
-* User can still unlock phone by entering random password but hidden apps will not be visible.
+* It will protect selected apps by adding a lock screen above them.
+* It acts as secondary LockScreen.
+* User can still unlock phone by entering random password but protected apps will not be accessible.
 * Option to customize lock screen (wallpaper, quote, todo).
 
 
@@ -15,7 +15,7 @@ Custom Android LockScreen app to provide extra layer of privacy. It doesn't disa
 |  |  |
 | --- | --- |
 |![LockScreen with Hidden Password Input](./screenshots/lockscreen_no_password.png) | ![LockScreen](./screenshots/lockscreen.png)|
-|![Hide Apps](./screenshots/hide_apps.png) | ![Help](./screenshots/help.png)|
+|![Protect Apps](./screenshots/protect_apps.png) | ![Help](./screenshots/help.png)|
 
 ### How to contribute?
 * Fork this repository.

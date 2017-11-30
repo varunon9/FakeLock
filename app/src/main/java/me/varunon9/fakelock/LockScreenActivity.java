@@ -3,11 +3,13 @@ package me.varunon9.fakelock;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,6 +37,9 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
     private Map<String, ?> hiddenAppsMap;
     private PackageManager packageManager;
 
+    // settings preferences
+    private SharedPreferences settingsPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +49,8 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         startService(new Intent(this,LockScreenService.class));
 
         setContentView(R.layout.activity_lock_screen);
+
+        settingsPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         Button button0 = (Button) findViewById(R.id.button0);
         button0.setOnClickListener(this);
@@ -81,6 +88,22 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         subHeadingTextView = (TextView) findViewById(R.id.subHeadingTextView);
         quoteTextView = (TextView) findViewById(R.id.quoteTextView);
 
+        // setting headings and quote
+        String heading = settingsPreferences.getString("heading_preference", null);
+        if (heading != null && !heading.equals("")) {
+            headingTextView.setText(heading);
+        }
+
+        String subheading = settingsPreferences.getString("subheading_preference", null);
+        if (subheading != null && !subheading.equals("")) {
+            subHeadingTextView.setText(subheading);
+        }
+
+        String quote = settingsPreferences.getString("quote_preference", null);
+        if (quote != null && !quote.equals("")) {
+            quoteTextView.setText(quote);
+        }
+
         quoteTextView.setOnTouchListener(new View.OnTouchListener() {
 
             private GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
@@ -109,14 +132,14 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         // hiding apps
         hiddenAppsMap =
                 new HideAppsPreferenceUtility(getApplicationContext()).getAllHiddenAppsMap();
-        for (Map.Entry<String, ?> app : hiddenAppsMap.entrySet()) {
+        /*for (Map.Entry<String, ?> app : hiddenAppsMap.entrySet()) {
             String packageName = app.getValue().toString();
             System.out.println(packageName);
             ComponentName componentName =
                     new ComponentName(packageName, packageName + ".MainActivity.class");
             packageManager.setComponentEnabledSetting(componentName,
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-        }
+        }*/
     }
 
     /**
@@ -270,6 +293,13 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
      * @param password
      */
     private void checkAndUnlockScreen(String password) {
-        unlockScreen(true);
+        boolean isPasswordRight = false;
+        String pin = settingsPreferences.getString("password_preference", "");
+
+        // also true when no password is set
+        if (pin.equals(password) || pin.equals("")) {
+            isPasswordRight = true;
+        }
+        unlockScreen(isPasswordRight);
     }
 }

@@ -11,8 +11,21 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="heading">Hi Mr. Developer!!</string>
-    <string name="subHeading">Today is the best day.</string>
+    <string name="subheading">Today is the best day.</string>
     <string name="quote">Arise, awake and do not stop until the goal is reached.</string>
+
+    <string name="set_heading">Set Heading</string>
+    <string name="set_subheading">Set Subheading</string>
+    <string name="set_quote">Set Quote</string>
+    <string name="set_password">Set Password</string>
+
+    <string name="set_heading_summary">Heading to be displayed on LockScreen</string>
+    <string name="set_subheading_summary">Subheading to be displayed on LockScreen</string>
+    <string name="set_quote_summary">Quote to be displayed on LockScreen</string>
+    <string name="set_password_summary">Choose PIN (Numeric Password) for LockScreen</string>
+
+    <string name="set_background">Set Background</string>
+    <string name="set_background_summary">Background image of LockScreen</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
