@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -21,12 +23,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.InputStream;
 import java.util.Map;
 
+import me.varunon9.fakelock.settings.SettingsPreferencesKeys;
 import me.varunon9.fakelock.utility.HideAppsPreferenceUtility;
 
 public class LockScreenActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private LinearLayout mainLinearLayout;
     private EditText inputPasswordEditText;
     private Vibrator vibrator;
     private TextView headingTextView;
@@ -51,6 +56,22 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_lock_screen);
 
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        mainLinearLayout = (LinearLayout) findViewById(R.id.mainLinearLayout);
+        String backgroundImageUri = settingsPreferences.getString(SettingsPreferencesKeys.
+                BACKGROUND_PREFERENCE_KEY, null);
+        if (backgroundImageUri != null) {
+            try {
+                Uri imageUri = Uri.parse(backgroundImageUri);
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                mainLinearLayout.setBackground(Drawable.createFromStream(inputStream,
+                        imageUri.toString()));
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error setting Background", Toast.LENGTH_LONG).
+                        show();
+            }
+        }
 
         Button button0 = (Button) findViewById(R.id.button0);
         button0.setOnClickListener(this);
@@ -89,17 +110,23 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
         quoteTextView = (TextView) findViewById(R.id.quoteTextView);
 
         // setting headings and quote
-        String heading = settingsPreferences.getString("heading_preference", null);
+        String heading =
+                settingsPreferences.getString(SettingsPreferencesKeys.HEADING_PREFERENCE_KEY,
+                        null);
         if (heading != null && !heading.equals("")) {
             headingTextView.setText(heading);
         }
 
-        String subheading = settingsPreferences.getString("subheading_preference", null);
+        String subheading =
+                settingsPreferences.getString(SettingsPreferencesKeys.SUBHEADING_PREFERENCE_KEY,
+                        null);
         if (subheading != null && !subheading.equals("")) {
             subHeadingTextView.setText(subheading);
         }
 
-        String quote = settingsPreferences.getString("quote_preference", null);
+        String quote =
+                settingsPreferences.getString(SettingsPreferencesKeys.QUOTE_PREFERENCE_KEY,
+                        null);
         if (quote != null && !quote.equals("")) {
             quoteTextView.setText(quote);
         }
@@ -294,7 +321,9 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
      */
     private void checkAndUnlockScreen(String password) {
         boolean isPasswordRight = false;
-        String pin = settingsPreferences.getString("password_preference", "");
+        String pin =
+                settingsPreferences.getString(SettingsPreferencesKeys.PASSWORD_PREFERENCE_KEY,
+                        "");
 
         // also true when no password is set
         if (pin.equals(password) || pin.equals("")) {
